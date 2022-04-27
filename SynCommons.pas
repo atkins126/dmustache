@@ -33844,14 +33844,14 @@ begin
     _80 := PtrUInt($8080808080808080); // use registers for constants
     _61 := $6161616161616161;
     _7b := $7b7b7b7b7b7b7b7b;
-    for i := 0 to sourceLen shr 3 do begin
+    for i := 0 to (sourceLen-1) shr 3 do begin
       c := PPtrUIntArray(source)^[i];
       d := c or _80;
       PPtrUIntArray(dest)^[i] := c-((d-PtrUInt(_61)) and not(d-_7b)) and
         ((not c) and _80)shr 2;
     end;
     {$else} // unbranched uppercase conversion of 4 chars blocks
-    for i := 0 to sourceLen shr 2 do begin
+    for i := 0 to (sourceLen-1) shr 2 do begin
       c := PPtrUIntArray(source)^[i];
       d := c or PtrUInt($80808080);
       PPtrUIntArray(dest)^[i] := c-((d-PtrUInt($61616161)) and not(d-PtrUInt($7b7b7b7b))) and
@@ -40408,7 +40408,7 @@ function FastFindUpperPUTF8CharSorted(P: PPUTF8CharArray; R: PtrInt;
   Value: PUTF8Char; ValueLen: PtrInt): PtrInt;
 var tmp: array[byte] of AnsiChar;
 begin
-  UpperCopy255Buf(@tmp,Value,ValueLen);
+  UpperCopy255Buf(@tmp,Value,ValueLen)^ := #0;
   result := FastFindPUTF8CharSorted(P,R,@tmp);
 end;
 
@@ -44354,7 +44354,7 @@ begin
     UpperCaseCopy(TypeName,TypeNameLen,ItemTypeName^);
     up := pointer(ItemTypeName^);
   end else begin
-    UpperCopy255Buf(@tmp,TypeName,TypeNameLen);
+    UpperCopy255Buf(@tmp,TypeName,TypeNameLen)^ := #0;
     up := @tmp;
   end;
 //for ndx := 1 to SORTEDMAX do assert(StrComp(SORTEDNAMES[ndx],SORTEDNAMES[ndx-1])>0,SORTEDNAMES[ndx]);
